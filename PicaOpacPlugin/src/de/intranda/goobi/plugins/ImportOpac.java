@@ -35,6 +35,7 @@ import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 import org.apache.log4j.Logger;
 import org.goobi.production.enums.PluginType;
+import org.goobi.production.plugin.interfaces.IOpacPlugin;
 import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -51,7 +52,6 @@ import ugh.exceptions.TypeNotAllowedAsChildException;
 import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.fileformats.mets.XStream;
 import ugh.fileformats.opac.PicaPlus;
-import de.sub.goobi.Import.IOpacPlugin;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.UghHelper;
 import de.unigoettingen.sub.search.opac.Catalogue;
@@ -69,13 +69,14 @@ public class ImportOpac implements IOpacPlugin {
 	private String gattung = "Aa";
 	private String atstsl;
 	ConfigOpacCatalogue coc;
+	private boolean verbose = false;
 
 	/* (non-Javadoc)
      * @see de.sub.goobi.Import.IOpac#OpacToDocStruct(java.lang.String, java.lang.String, java.lang.String, ugh.dl.Prefs, boolean)
      */
 	@Override
     @SuppressWarnings("unchecked")
-	public Fileformat OpacToDocStruct(String inSuchfeld, String inSuchbegriff, ConfigOpacCatalogue catalogue, Prefs inPrefs, boolean verbose) throws Exception {
+	public Fileformat search(String inSuchfeld, String inSuchbegriff, ConfigOpacCatalogue catalogue, Prefs inPrefs) throws Exception {
 		/*
 		 * -------------------------------- Katalog auswählen --------------------------------
 		 */
@@ -114,7 +115,7 @@ public class ImportOpac implements IOpacPlugin {
 		 * --------------------------------
 		 */
 		// if (isMultivolume()) {
-		if (getOpacDocType(verbose).isMultiVolume()) {
+		if (getOpacDocType().isMultiVolume()) {
 			/* Sammelband-PPN ermitteln */
 			String multiVolumePpn = getPpnFromParent(myFirstHit, "036D", "9");
 			if (multiVolumePpn != "") {
@@ -161,7 +162,7 @@ public class ImportOpac implements IOpacPlugin {
 		 * -------------------------------- wenn der Treffer ein Contained Work ist, dann übergeordnetes Werk --------------------------------
 		 */
 		// if (isContainedWork()) {
-		if (getOpacDocType(verbose).isContainedWork()) {
+		if (getOpacDocType().isContainedWork()) {
 			/* PPN des übergeordneten Werkes ermitteln */
 			String ueberGeordnetePpn = getPpnFromParent(myFirstHit, "021A", "9");
 			if (ueberGeordnetePpn != "") {
@@ -301,7 +302,7 @@ public class ImportOpac implements IOpacPlugin {
 		 * -------------------------------- bei Multivolumes noch das Child in xml und docstruct ermitteln --------------------------------
 		 */
 		// if (isMultivolume()) {
-		if (getOpacDocType(verbose).isMultiVolume()) {
+		if (getOpacDocType().isMultiVolume()) {
 			try {
 				topstructChild = topstruct.getAllChildren().get(0);
 			} catch (RuntimeException e) {
@@ -460,7 +461,7 @@ public class ImportOpac implements IOpacPlugin {
 		 * -------------------------------- bei Zeitschriften noch ein PeriodicalVolume als Child einfügen --------------------------------
 		 */
 		// if (isPeriodical()) {
-		if (getOpacDocType(verbose).isPeriodical()) {
+		if (getOpacDocType().isPeriodical()) {
 			try {
 				DocStructType dstV = inPrefs.getDocStrctTypeByName("PeriodicalVolume");
 				DocStruct dsvolume = inDigDoc.createDocStruct(dstV);
@@ -655,7 +656,7 @@ public class ImportOpac implements IOpacPlugin {
      * @see de.sub.goobi.Import.IOpac#getOpacDocType(boolean)
      */
 	@Override
-    public ConfigOpacDoctype getOpacDocType(boolean verbose) {
+    public ConfigOpacDoctype getOpacDocType() {
 		try {
 			ConfigOpac co = new ConfigOpac();
 			ConfigOpacDoctype cod = co.getDoctypeByMapping(this.gattung.substring(0, 2), this.coc.getTitle());
