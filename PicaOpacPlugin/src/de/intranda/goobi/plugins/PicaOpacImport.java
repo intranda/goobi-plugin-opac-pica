@@ -62,8 +62,8 @@ import de.unigoettingen.sub.search.opac.GetOpac;
 import de.unigoettingen.sub.search.opac.Query;
 
 @PluginImplementation
-public class ImportOpac implements IOpacPlugin {
-	private static final Logger myLogger = Logger.getLogger(ImportOpac.class);
+public class PicaOpacImport implements IOpacPlugin {
+	private static final Logger myLogger = Logger.getLogger(PicaOpacImport.class);
 
 	private int hitcount;
 	private String gattung = "Aa";
