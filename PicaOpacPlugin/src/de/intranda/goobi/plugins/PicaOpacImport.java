@@ -478,7 +478,7 @@ public class PicaOpacImport implements IOpacPlugin {
 	/* (non-Javadoc)
      * @see de.sub.goobi.Import.IOpac#createAtstsl(java.lang.String, java.lang.String)
      */
-	@Override
+	
     public String createAtstsl(String myTitle, String autor) {
 		String myAtsTsl = "";
 		if (autor != null && !autor.equals("")) {
