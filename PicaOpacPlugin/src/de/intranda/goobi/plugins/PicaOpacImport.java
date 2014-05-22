@@ -56,11 +56,11 @@ import de.unigoettingen.sub.search.opac.Query;
 
 @PluginImplementation
 public class PicaOpacImport implements IOpacPlugin {
-    private static final Logger myLogger = Logger.getLogger(PicaOpacImport.class);
+    protected static final Logger myLogger = Logger.getLogger(PicaOpacImport.class);
 
-    private int hitcount;
-    private String gattung = "Aa";
-    private String atstsl;
+    protected int hitcount;
+    protected String gattung = "Aa";
+    protected String atstsl;
     ConfigOpacCatalogue coc;
     private boolean verbose = false;
 
@@ -227,7 +227,7 @@ public class PicaOpacImport implements IOpacPlugin {
      * @return
      */
     @SuppressWarnings("unchecked")
-    private String getGattung(Element inHit) {
+    public String getGattung(Element inHit) {
 
         for (Iterator<Element> iter = inHit.getChildren().iterator(); iter.hasNext();) {
             Element tempElement = iter.next();
@@ -241,7 +241,7 @@ public class PicaOpacImport implements IOpacPlugin {
     }
 
     @SuppressWarnings("unchecked")
-    private String getSubelementValue(Element inElement, String attributeValue) {
+    public String getSubelementValue(Element inElement, String attributeValue) {
         String rueckgabe = "";
 
         for (Iterator<Element> iter = inElement.getChildren().iterator(); iter.hasNext();) {
@@ -260,7 +260,7 @@ public class PicaOpacImport implements IOpacPlugin {
      * @return
      */
     @SuppressWarnings("unchecked")
-    private String getPpnFromParent(Element inHit, String inFeldName, String inSubElement) {
+    public String getPpnFromParent(Element inHit, String inFeldName, String inSubElement) {
         for (Iterator<Element> iter = inHit.getChildren().iterator(); iter.hasNext();) {
             Element tempElement = iter.next();
             String feldname = tempElement.getAttributeValue("tag");
@@ -285,7 +285,7 @@ public class PicaOpacImport implements IOpacPlugin {
      * zusätzliche Opac-Details ## ##################################################### ####################################################
      */
 
-    private void checkMyOpacResult(DigitalDocument inDigDoc, Prefs inPrefs, Element myFirstHit, boolean verbose) {
+    public void checkMyOpacResult(DigitalDocument inDigDoc, Prefs inPrefs, Element myFirstHit, boolean verbose) {
         UghHelper ughhelp = new UghHelper();
         DocStruct topstruct = inDigDoc.getLogicalDocStruct();
         DocStruct boundbook = inDigDoc.getPhysicalDocStruct();
@@ -532,7 +532,7 @@ public class PicaOpacImport implements IOpacPlugin {
     }
 
     @SuppressWarnings("unchecked")
-    private Element getElementFromChildren(Element inHit, String inTagName) {
+    public Element getElementFromChildren(Element inHit, String inTagName) {
         for (Iterator<Element> iter2 = inHit.getChildren().iterator(); iter2.hasNext();) {
             Element myElement = iter2.next();
             String feldname = myElement.getAttributeValue("tag");
@@ -552,7 +552,7 @@ public class PicaOpacImport implements IOpacPlugin {
      * Element bereits einen Parent hat ================================================================
      */
     @SuppressWarnings("unchecked")
-    private Element getCopyFromJdomElement(Element inHit) {
+    public Element getCopyFromJdomElement(Element inHit) {
         Element myElement = new Element(inHit.getName());
         myElement.setText(inHit.getText());
         /* jetzt auch alle Attribute übernehmen */
@@ -574,7 +574,7 @@ public class PicaOpacImport implements IOpacPlugin {
     }
 
     @SuppressWarnings("unchecked")
-    private String getElementFieldValue(Element myFirstHit, String inFieldName, String inAttributeName) {
+    public String getElementFieldValue(Element myFirstHit, String inFieldName, String inAttributeName) {
 
         for (Iterator<Element> iter2 = myFirstHit.getChildren().iterator(); iter2.hasNext();) {
             Element myElement = iter2.next();
@@ -590,7 +590,7 @@ public class PicaOpacImport implements IOpacPlugin {
     }
 
     @SuppressWarnings("unchecked")
-    private String getFieldValue(Element inElement, String attributeValue) {
+    public String getFieldValue(Element inElement, String attributeValue) {
         String rueckgabe = "";
 
         for (Iterator<Element> iter = inElement.getChildren().iterator(); iter.hasNext();) {
