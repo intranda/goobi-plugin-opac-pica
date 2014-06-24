@@ -62,7 +62,7 @@ public class PicaOpacImport implements IOpacPlugin {
     protected String gattung = "Aa";
     protected String atstsl;
     ConfigOpacCatalogue coc;
-    private boolean verbose = false;
+    private boolean verbose = true;
 
     /* (non-Javadoc)
      * @see de.sub.goobi.Import.IOpac#OpacToDocStruct(java.lang.String, java.lang.String, java.lang.String, ugh.dl.Prefs, boolean)
