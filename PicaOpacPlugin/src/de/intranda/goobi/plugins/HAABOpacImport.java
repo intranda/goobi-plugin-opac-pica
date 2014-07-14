@@ -23,7 +23,7 @@ import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.interfaces.IOpacPlugin;
-import org.jdom.Element;
+import org.jdom2.Element;
 
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;

@@ -19,8 +19,8 @@
  */
 package de.intranda.goobi.plugins;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
-
 import java.util.Iterator;
 import java.util.StringTokenizer;
 
@@ -29,11 +29,12 @@ import net.xeoh.plugins.base.annotations.PluginImplementation;
 import org.apache.log4j.Logger;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.interfaces.IOpacPlugin;
-import org.jdom.Attribute;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.input.DOMBuilder;
-import org.jdom.output.DOMOutputter;
+import org.jdom2.Attribute;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.input.DOMBuilder;
+import org.jdom2.output.DOMOutputter;
+import org.jdom2.output.XMLOutputter;
 import org.w3c.dom.Node;
 
 import ugh.dl.DigitalDocument;
@@ -196,10 +197,10 @@ public class PicaOpacImport implements IOpacPlugin {
          * -------------------------------- aus Opac-Ergebnis RDF-Datei erzeugen --------------------------------
          */
         /* XML in Datei schreiben */
-        //		 XMLOutputter outputter = new XMLOutputter();
-        //		 FileOutputStream output = new
-        //		 FileOutputStream("/home/robert/temp_opac.xml");
-        //		 outputter.output(myJdomDoc.getRootElement(), output);
+        		 XMLOutputter outputter = new XMLOutputter();
+        		 FileOutputStream output = new
+        		 FileOutputStream("/home/robert/temp_opac.xml");
+        		 outputter.output(myJdomDoc.getRootElement(), output);
 
         /* myRdf temporär in Datei schreiben */
         // myRdf.write("D:/temp.rdf.xml");
