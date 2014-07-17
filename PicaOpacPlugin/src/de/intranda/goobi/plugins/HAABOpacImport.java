@@ -60,7 +60,7 @@ public class HAABOpacImport extends PicaOpacImport implements IOpacPlugin {
         } else {
             myAtsTsl = titleValue;
         }
-
+        myAtsTsl = convertUmlaut(myAtsTsl);
         myAtsTsl = myAtsTsl.replaceAll("[\\W]", "");
         return myAtsTsl.toLowerCase();
     }

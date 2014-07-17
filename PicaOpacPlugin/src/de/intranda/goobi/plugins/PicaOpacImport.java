@@ -19,8 +19,10 @@
  */
 package de.intranda.goobi.plugins;
 
-import java.io.FileOutputStream;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Iterator;
 import java.util.StringTokenizer;
 
@@ -34,7 +36,6 @@ import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.input.DOMBuilder;
 import org.jdom2.output.DOMOutputter;
-import org.jdom2.output.XMLOutputter;
 import org.w3c.dom.Node;
 
 import ugh.dl.DigitalDocument;
@@ -46,6 +47,7 @@ import ugh.exceptions.TypeNotAllowedAsChildException;
 import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.fileformats.mets.XStream;
 import ugh.fileformats.opac.PicaPlus;
+import de.sub.goobi.config.ConfigurationHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.UghHelper;
 import de.unigoettingen.sub.search.opac.Catalogue;
@@ -69,7 +71,6 @@ public class PicaOpacImport implements IOpacPlugin {
      * @see de.sub.goobi.Import.IOpac#OpacToDocStruct(java.lang.String, java.lang.String, java.lang.String, ugh.dl.Prefs, boolean)
      */
     @Override
-    @SuppressWarnings("unchecked")
     public Fileformat search(String inSuchfeld, String inSuchbegriff, ConfigOpacCatalogue catalogue, Prefs inPrefs) throws Exception {
         /*
          * -------------------------------- Katalog auswählen --------------------------------
@@ -227,7 +228,6 @@ public class PicaOpacImport implements IOpacPlugin {
      * @param inHit
      * @return
      */
-    @SuppressWarnings("unchecked")
     public String getGattung(Element inHit) {
 
         for (Iterator<Element> iter = inHit.getChildren().iterator(); iter.hasNext();) {
@@ -241,7 +241,6 @@ public class PicaOpacImport implements IOpacPlugin {
         return "";
     }
 
-    @SuppressWarnings("unchecked")
     public String getSubelementValue(Element inElement, String attributeValue) {
         String rueckgabe = "";
 
@@ -260,7 +259,6 @@ public class PicaOpacImport implements IOpacPlugin {
      * @param inElement
      * @return
      */
-    @SuppressWarnings("unchecked")
     public String getPpnFromParent(Element inHit, String inFeldName, String inSubElement) {
         for (Iterator<Element> iter = inHit.getChildren().iterator(); iter.hasNext();) {
             Element tempElement = iter.next();
@@ -527,12 +525,34 @@ public class PicaOpacImport implements IOpacPlugin {
             }
         }
         /* im ATS-TSL die Umlaute ersetzen */
-
+        myAtsTsl = convertUmlaut(myAtsTsl);
         myAtsTsl = myAtsTsl.replaceAll("[\\W]", "");
         return myAtsTsl;
     }
+    
+    
+    protected String convertUmlaut(String inString) {
+        /* Pfad zur Datei ermitteln */
+        String filename = ConfigurationHelper.getInstance().getConfigurationFolder() + "goobi_opacUmlaut.txt";
+//      }
+        /* Datei zeilenweise durchlaufen und die Sprache vergleichen */
+        try {
+            FileInputStream fis = new FileInputStream(filename);
+            InputStreamReader isr = new InputStreamReader(fis, "UTF8");
+            BufferedReader in = new BufferedReader(isr);
+            String str;
+            while ((str = in.readLine()) != null) {
+                if (str.length() > 0) {
+                    inString = inString.replaceAll(str.split(" ")[0], str.split(" ")[1]);
+                }
+            }
+            in.close();
+        } catch (IOException e) {
+            myLogger.error("IOException bei Umlautkonvertierung", e);
+        }
+        return inString;
+    }
 
-    @SuppressWarnings("unchecked")
     public Element getElementFromChildren(Element inHit, String inTagName) {
         for (Iterator<Element> iter2 = inHit.getChildren().iterator(); iter2.hasNext();) {
             Element myElement = iter2.next();
@@ -552,7 +572,6 @@ public class PicaOpacImport implements IOpacPlugin {
      * rekursives Kopieren von Elementen, weil das Einfügen eines Elements an einen anderen Knoten mit dem Fehler abbricht, dass das einzufügende
      * Element bereits einen Parent hat ================================================================
      */
-    @SuppressWarnings("unchecked")
     public Element getCopyFromJdomElement(Element inHit) {
         Element myElement = new Element(inHit.getName());
         myElement.setText(inHit.getText());
@@ -574,7 +593,6 @@ public class PicaOpacImport implements IOpacPlugin {
         return myElement;
     }
 
-    @SuppressWarnings("unchecked")
     public String getElementFieldValue(Element myFirstHit, String inFieldName, String inAttributeName) {
 
         for (Iterator<Element> iter2 = myFirstHit.getChildren().iterator(); iter2.hasNext();) {
@@ -590,7 +608,6 @@ public class PicaOpacImport implements IOpacPlugin {
         return "";
     }
 
-    @SuppressWarnings("unchecked")
     public String getFieldValue(Element inElement, String attributeValue) {
         String rueckgabe = "";
 
