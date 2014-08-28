@@ -706,4 +706,13 @@ public class PicaOpacImport implements IOpacPlugin {
     public String getDescription() {
         return "PICA";
     }
+    
+    public void setAtstsl(String createAtstsl) {
+        atstsl = createAtstsl;
+    }
+
+    
+    public String getGattung() {
+        return gattung;
+    }
 }
