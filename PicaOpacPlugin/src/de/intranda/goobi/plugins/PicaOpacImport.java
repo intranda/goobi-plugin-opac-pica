@@ -21,6 +21,7 @@ package de.intranda.goobi.plugins;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Iterator;
@@ -36,6 +37,7 @@ import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.input.DOMBuilder;
 import org.jdom2.output.DOMOutputter;
+import org.jdom2.output.XMLOutputter;
 import org.w3c.dom.Node;
 
 import ugh.dl.DigitalDocument;
@@ -65,7 +67,7 @@ public class PicaOpacImport implements IOpacPlugin {
     protected String gattung = "Aa";
     protected String atstsl;
     ConfigOpacCatalogue coc;
-    private boolean verbose = true;
+    private boolean verbose = false;
 
     /* (non-Javadoc)
      * @see de.sub.goobi.Import.IOpac#OpacToDocStruct(java.lang.String, java.lang.String, java.lang.String, ugh.dl.Prefs, boolean)
