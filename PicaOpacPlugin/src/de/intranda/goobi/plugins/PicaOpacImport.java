@@ -83,6 +83,7 @@ public class PicaOpacImport implements IOpacPlugin {
         }
         Catalogue cat =
                 new Catalogue(this.coc.getDescription(), this.coc.getAddress(), this.coc.getPort(), this.coc.getCbs(), this.coc.getDatabase());
+        cat.setProtocol(coc.getProtocol());
         if (verbose) {
             Helper.setMeldung(null, Helper.getTranslation("CatalogueUsage") + ": ", this.coc.getDescription());
         }
