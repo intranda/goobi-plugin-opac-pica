@@ -201,10 +201,10 @@ public class PicaOpacImport implements IOpacPlugin {
          * -------------------------------- aus Opac-Ergebnis RDF-Datei erzeugen --------------------------------
          */
         /* XML in Datei schreiben */
-//        		 XMLOutputter outputter = new XMLOutputter();
-//        		 FileOutputStream output = new
-//        		 FileOutputStream("/home/robert/temp_opac.xml");
-//        		 outputter.output(myJdomDoc.getRootElement(), output);
+        //        		 XMLOutputter outputter = new XMLOutputter();
+        //        		 FileOutputStream output = new
+        //        		 FileOutputStream("/home/robert/temp_opac.xml");
+        //        		 outputter.output(myJdomDoc.getRootElement(), output);
 
         /* myRdf temporär in Datei schreiben */
         // myRdf.write("D:/temp.rdf.xml");
@@ -314,6 +314,11 @@ public class PicaOpacImport implements IOpacPlugin {
         if (this.gattung.toLowerCase().startsWith("o")) {
             ughhelp.replaceMetadatum(topstruct, inPrefs, "CatalogIDDigital", ppn);
         } else {
+            String ppnAnalog = getElementFieldValue(myFirstHit, "039D", "9");
+            if (ppnAnalog.isEmpty()) {
+                ppnAnalog = getElementFieldValue(myFirstHit, "039I", "9");
+            }
+            ughhelp.replaceMetadatum(topstruct, inPrefs, "CatalogIDDigital", ppnAnalog);
             ughhelp.replaceMetadatum(topstruct, inPrefs, "CatalogIDSource", ppn);
         }
 
@@ -322,10 +327,15 @@ public class PicaOpacImport implements IOpacPlugin {
          */
         if (topstructChild != null && mySecondHit != null) {
             String secondHitppn = getElementFieldValue(mySecondHit, "003@", "0");
-            ughhelp.replaceMetadatum(topstructChild, inPrefs, "CatalogIDDigital", "");
+            //            ughhelp.replaceMetadatum(topstructChild, inPrefs, "CatalogIDDigital", "");
             if (this.gattung.toLowerCase().startsWith("o")) {
                 ughhelp.replaceMetadatum(topstructChild, inPrefs, "CatalogIDDigital", secondHitppn);
             } else {
+                String ppnAnalog = getElementFieldValue(myFirstHit, "039D", "9");
+                if (ppnAnalog.isEmpty()) {
+                    ppnAnalog = getElementFieldValue(myFirstHit, "039I", "9");
+                }
+                ughhelp.replaceMetadatum(topstructChild, inPrefs, "CatalogIDDigital", ppnAnalog);
                 ughhelp.replaceMetadatum(topstructChild, inPrefs, "CatalogIDSource", secondHitppn);
             }
         }
@@ -532,12 +542,11 @@ public class PicaOpacImport implements IOpacPlugin {
         myAtsTsl = myAtsTsl.replaceAll("[\\W]", "");
         return myAtsTsl;
     }
-    
-    
+
     protected String convertUmlaut(String inString) {
         /* Pfad zur Datei ermitteln */
         String filename = ConfigurationHelper.getInstance().getConfigurationFolder() + "goobi_opacUmlaut.txt";
-//      }
+        //      }
         /* Datei zeilenweise durchlaufen und die Sprache vergleichen */
         try {
             FileInputStream fis = new FileInputStream(filename);
@@ -709,12 +718,11 @@ public class PicaOpacImport implements IOpacPlugin {
     public String getDescription() {
         return "PICA";
     }
-    
+
     public void setAtstsl(String createAtstsl) {
         atstsl = createAtstsl;
     }
 
-    
     public String getGattung() {
         return gattung;
     }
