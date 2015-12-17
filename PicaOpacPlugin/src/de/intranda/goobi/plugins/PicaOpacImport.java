@@ -331,9 +331,9 @@ public class PicaOpacImport implements IOpacPlugin {
             if (this.gattung.toLowerCase().startsWith("o")) {
                 ughhelp.replaceMetadatum(topstructChild, inPrefs, "CatalogIDDigital", secondHitppn);
             } else {
-                String ppnAnalog = getElementFieldValue(myFirstHit, "039D", "9");
+                String ppnAnalog = getElementFieldValue(mySecondHit, "039D", "9");
                 if (ppnAnalog.isEmpty()) {
-                    ppnAnalog = getElementFieldValue(myFirstHit, "039I", "9");
+                    ppnAnalog = getElementFieldValue(mySecondHit, "039I", "9");
                 }
                 ughhelp.replaceMetadatum(topstructChild, inPrefs, "CatalogIDDigital", ppnAnalog);
                 ughhelp.replaceMetadatum(topstructChild, inPrefs, "CatalogIDSource", secondHitppn);
