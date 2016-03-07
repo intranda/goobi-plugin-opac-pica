@@ -201,10 +201,9 @@ public class PicaOpacImport implements IOpacPlugin {
          * -------------------------------- aus Opac-Ergebnis RDF-Datei erzeugen --------------------------------
          */
         /* XML in Datei schreiben */
-        //        		 XMLOutputter outputter = new XMLOutputter();
-        //        		 FileOutputStream output = new
-        //        		 FileOutputStream("/home/robert/temp_opac.xml");
-        //        		 outputter.output(myJdomDoc.getRootElement(), output);
+        XMLOutputter outputter = new XMLOutputter();
+        FileOutputStream output = new FileOutputStream("/tmp/temp_opac.xml");
+        outputter.output(myJdomDoc.getRootElement(), output);
 
         /* myRdf temporär in Datei schreiben */
         // myRdf.write("D:/temp.rdf.xml");
@@ -290,7 +289,6 @@ public class PicaOpacImport implements IOpacPlugin {
     public void checkMyOpacResult(DigitalDocument inDigDoc, Prefs inPrefs, Element myFirstHit, boolean verbose) {
         UghHelper ughhelp = new UghHelper();
         DocStruct topstruct = inDigDoc.getLogicalDocStruct();
-        DocStruct boundbook = inDigDoc.getPhysicalDocStruct();
         DocStruct topstructChild = null;
         Element mySecondHit = null;
 
@@ -381,46 +379,6 @@ public class PicaOpacImport implements IOpacPlugin {
         }
 
         /*
-         * -------------------------------- Sprachen - Konvertierung auf zwei Stellen --------------------------------
-         */
-        String sprache = getElementFieldValue(myFirstHit, "010@", "a");
-        sprache = ughhelp.convertLanguage(sprache);
-        ughhelp.replaceMetadatum(topstruct, inPrefs, "DocLanguage", sprache);
-
-        /*
-         * -------------------------------- bei multivolumes die Sprachen - Konvertierung auf zwei Stellen --------------------------------
-         */
-        if (topstructChild != null && mySecondHit != null) {
-            String spracheMulti = getElementFieldValue(mySecondHit, "010@", "a");
-            spracheMulti = ughhelp.convertLanguage(spracheMulti);
-            ughhelp.replaceMetadatum(topstructChild, inPrefs, "DocLanguage", spracheMulti);
-        }
-
-        /*
-         * -------------------------------- ISSN --------------------------------
-         */
-        String issn = getElementFieldValue(myFirstHit, "005A", "0");
-        ughhelp.replaceMetadatum(topstruct, inPrefs, "ISSN", issn);
-
-        /*
-         * -------------------------------- Copyright --------------------------------
-         */
-        String copyright = getElementFieldValue(myFirstHit, "037I", "a");
-        ughhelp.replaceMetadatum(boundbook, inPrefs, "copyrightimageset", copyright);
-
-        /*
-         * -------------------------------- Format --------------------------------
-         */
-        String format = getElementFieldValue(myFirstHit, "034I", "a");
-        ughhelp.replaceMetadatum(boundbook, inPrefs, "FormatSourcePrint", format);
-
-        /*
-         * -------------------------------- Umfang --------------------------------
-         */
-        String umfang = getElementFieldValue(myFirstHit, "034D", "a");
-        ughhelp.replaceMetadatum(topstruct, inPrefs, "SizeSourcePrint", umfang);
-
-        /*
          * -------------------------------- Signatur --------------------------------
          */
         String sig = getElementFieldValue(myFirstHit, "209A", "c");
@@ -429,7 +387,11 @@ public class PicaOpacImport implements IOpacPlugin {
         }
         sig += getElementFieldValue(myFirstHit, "209A", "f") + " ";
         sig += getElementFieldValue(myFirstHit, "209A", "a");
-        ughhelp.replaceMetadatum(boundbook, inPrefs, "shelfmarksource", sig.trim());
+        if (topstructChild != null && mySecondHit != null) {
+            ughhelp.replaceMetadatum(topstructChild, inPrefs, "shelfmarksource", sig.trim());
+        } else {
+            ughhelp.replaceMetadatum(topstruct, inPrefs, "shelfmarksource", sig.trim());
+        }
         if (sig.trim().length() == 0) {
             myLogger.debug("Signatur part 1: " + sig);
             myLogger.debug(myFirstHit.getChildren());
@@ -443,7 +405,11 @@ public class PicaOpacImport implements IOpacPlugin {
                 sig += getElementFieldValue(mySecondHit, "209A", "f") + " ";
                 sig += getElementFieldValue(mySecondHit, "209A", "a");
             }
-            ughhelp.replaceMetadatum(boundbook, inPrefs, "shelfmarksource", sig.trim());
+            if (topstructChild != null && mySecondHit != null) {
+                ughhelp.replaceMetadatum(topstructChild, inPrefs, "shelfmarksource", sig.trim());
+            } else {
+                ughhelp.replaceMetadatum(topstruct, inPrefs, "shelfmarksource", sig.trim());
+            }
         }
         myLogger.debug("Signatur full: " + sig);
 
