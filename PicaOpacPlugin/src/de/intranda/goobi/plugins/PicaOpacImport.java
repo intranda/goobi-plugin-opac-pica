@@ -680,7 +680,7 @@ public class PicaOpacImport implements IOpacPlugin {
         return "PICA";
     }
 
-    @Override
+    
     public String getDescription() {
         return "PICA";
     }
