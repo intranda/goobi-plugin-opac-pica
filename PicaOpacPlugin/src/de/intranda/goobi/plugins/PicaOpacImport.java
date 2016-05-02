@@ -201,9 +201,9 @@ public class PicaOpacImport implements IOpacPlugin {
          * -------------------------------- aus Opac-Ergebnis RDF-Datei erzeugen --------------------------------
          */
         /* XML in Datei schreiben */
-        XMLOutputter outputter = new XMLOutputter();
-        FileOutputStream output = new FileOutputStream("/tmp/temp_opac.xml");
-        outputter.output(myJdomDoc.getRootElement(), output);
+//        XMLOutputter outputter = new XMLOutputter();
+//        FileOutputStream output = new FileOutputStream("/tmp/temp_opac.xml");
+//        outputter.output(myJdomDoc.getRootElement(), output);
 
         /* myRdf temporär in Datei schreiben */
         // myRdf.write("D:/temp.rdf.xml");
