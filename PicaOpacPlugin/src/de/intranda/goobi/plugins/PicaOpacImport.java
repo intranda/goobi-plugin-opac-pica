@@ -201,9 +201,9 @@ public class PicaOpacImport implements IOpacPlugin {
          * -------------------------------- aus Opac-Ergebnis RDF-Datei erzeugen --------------------------------
          */
         /* XML in Datei schreiben */
-//        XMLOutputter outputter = new XMLOutputter();
-//        FileOutputStream output = new FileOutputStream("/tmp/temp_opac.xml");
-//        outputter.output(myJdomDoc.getRootElement(), output);
+        //        XMLOutputter outputter = new XMLOutputter();
+        //        FileOutputStream output = new FileOutputStream("/tmp/temp_opac.xml");
+        //        outputter.output(myJdomDoc.getRootElement(), output);
 
         /* myRdf temporär in Datei schreiben */
         // myRdf.write("D:/temp.rdf.xml");
@@ -377,41 +377,6 @@ public class PicaOpacImport implements IOpacPlugin {
             ughhelp.replaceMetadatum(topstructChild, inPrefs, "TitleDocMainShort", sortingTitleMulti);
             // sortingTitle = sortingTitleMulti;
         }
-
-        /*
-         * -------------------------------- Signatur --------------------------------
-         */
-        String sig = getElementFieldValue(myFirstHit, "209A", "c");
-        if (sig.length() > 0) {
-            sig = "<" + sig + ">";
-        }
-        sig += getElementFieldValue(myFirstHit, "209A", "f") + " ";
-        sig += getElementFieldValue(myFirstHit, "209A", "a");
-        if (topstructChild != null && mySecondHit != null) {
-            ughhelp.replaceMetadatum(topstructChild, inPrefs, "shelfmarksource", sig.trim());
-        } else {
-            ughhelp.replaceMetadatum(topstruct, inPrefs, "shelfmarksource", sig.trim());
-        }
-        if (sig.trim().length() == 0) {
-            myLogger.debug("Signatur part 1: " + sig);
-            myLogger.debug(myFirstHit.getChildren());
-            sig = getElementFieldValue(myFirstHit, "209A/01", "c");
-            if (sig.length() > 0) {
-                sig = "<" + sig + ">";
-            }
-            sig += getElementFieldValue(myFirstHit, "209A/01", "f") + " ";
-            sig += getElementFieldValue(myFirstHit, "209A/01", "a");
-            if (mySecondHit != null) {
-                sig += getElementFieldValue(mySecondHit, "209A", "f") + " ";
-                sig += getElementFieldValue(mySecondHit, "209A", "a");
-            }
-            if (topstructChild != null && mySecondHit != null) {
-                ughhelp.replaceMetadatum(topstructChild, inPrefs, "shelfmarksource", sig.trim());
-            } else {
-                ughhelp.replaceMetadatum(topstruct, inPrefs, "shelfmarksource", sig.trim());
-            }
-        }
-        myLogger.debug("Signatur full: " + sig);
 
         /*
          * -------------------------------- Ats Tsl Vorbereitung --------------------------------
@@ -680,7 +645,6 @@ public class PicaOpacImport implements IOpacPlugin {
         return "PICA";
     }
 
-    
     public String getDescription() {
         return "PICA";
     }
