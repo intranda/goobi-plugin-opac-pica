@@ -613,20 +613,20 @@ public class PicaOpacImport implements IOpacPlugin {
     @Override
     public ConfigOpacDoctype getOpacDocType() {
         try {
-            ConfigOpac co = new ConfigOpac();
+            ConfigOpac co = ConfigOpac.getInstance();
             ConfigOpacDoctype cod = co.getDoctypeByMapping(this.gattung.substring(0, 2), this.coc.getTitle());
             if (cod == null) {
                 if (verbose) {
                     Helper.setFehlerMeldung(Helper.getTranslation("CatalogueUnKnownType") + ": ", this.gattung);
                 }
-                cod = new ConfigOpac().getAllDoctypes().get(0);
+                cod = ConfigOpac.getInstance().getAllDoctypes().get(0);
                 this.gattung = cod.getMappings().get(0);
                 if (verbose) {
                     Helper.setFehlerMeldung(Helper.getTranslation("CatalogueChangeDocType") + ": ", this.gattung + " - " + cod.getTitle());
                 }
             }
             return cod;
-        } catch (IOException e) {
+        } catch (Exception e) {
             myLogger.error("OpacDoctype unknown", e);
             if (verbose) {
                 Helper.setFehlerMeldung(Helper.getTranslation("CatalogueUnKnownType"), e);
