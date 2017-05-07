@@ -467,31 +467,9 @@ public class PicaOpacImport implements IOpacPlugin {
             }
         }
         /* im ATS-TSL die Umlaute ersetzen */
-        myAtsTsl = convertUmlaut(myAtsTsl);
+        myAtsTsl = UghHelper.convertUmlaut(myAtsTsl);
         myAtsTsl = myAtsTsl.replaceAll("[\\W]", "");
         return myAtsTsl;
-    }
-
-    protected String convertUmlaut(String inString) {
-        /* Pfad zur Datei ermitteln */
-        String filename = ConfigurationHelper.getInstance().getConfigurationFolder() + "goobi_opacUmlaut.txt";
-        //      }
-        /* Datei zeilenweise durchlaufen und die Sprache vergleichen */
-        try {
-            FileInputStream fis = new FileInputStream(filename);
-            InputStreamReader isr = new InputStreamReader(fis, "UTF8");
-            BufferedReader in = new BufferedReader(isr);
-            String str;
-            while ((str = in.readLine()) != null) {
-                if (str.length() > 0) {
-                    inString = inString.replaceAll(str.split(" ")[0], str.split(" ")[1]);
-                }
-            }
-            in.close();
-        } catch (IOException e) {
-            myLogger.error("IOException bei Umlautkonvertierung", e);
-        }
-        return inString;
     }
 
     public Element getElementFromChildren(Element inHit, String inTagName) {
@@ -611,8 +589,8 @@ public class PicaOpacImport implements IOpacPlugin {
     @Override
     public ConfigOpacDoctype getOpacDocType() {
         try {
-//            ConfigOpac co = ConfigOpac.getInstance();
-            ConfigOpac co = new ConfigOpac();
+            ConfigOpac co = ConfigOpac.getInstance();
+//            ConfigOpac co = new ConfigOpac();
             ConfigOpacDoctype cod = co.getDoctypeByMapping(this.gattung.substring(0, 2), this.coc.getTitle());
             if (cod == null) {
                 if (verbose) {
