@@ -1,8 +1,8 @@
 /**
  * This file is part of the pica opac import plugin for the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
- * Visit the websites for more information. 
- *          - http://digiverso.com 
+ * Visit the websites for more information.
+ *          - http://digiverso.com
  *          - http://www.intranda.com
  * 
  * Copyright 2011 - 2013, intranda GmbH, Göttingen
@@ -19,14 +19,9 @@
  */
 package de.intranda.goobi.plugins;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.Iterator;
 import java.util.StringTokenizer;
-
-import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 import org.apache.log4j.Logger;
 import org.goobi.production.enums.PluginType;
@@ -38,6 +33,15 @@ import org.jdom2.input.DOMBuilder;
 import org.jdom2.output.DOMOutputter;
 import org.w3c.dom.Node;
 
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.UghHelper;
+import de.unigoettingen.sub.search.opac.Catalogue;
+import de.unigoettingen.sub.search.opac.ConfigOpac;
+import de.unigoettingen.sub.search.opac.ConfigOpacCatalogue;
+import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
+import de.unigoettingen.sub.search.opac.GetOpac;
+import de.unigoettingen.sub.search.opac.Query;
+import net.xeoh.plugins.base.annotations.PluginImplementation;
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
 import ugh.dl.DocStructType;
@@ -47,15 +51,6 @@ import ugh.exceptions.TypeNotAllowedAsChildException;
 import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.fileformats.mets.XStream;
 import ugh.fileformats.opac.PicaPlus;
-import de.sub.goobi.config.ConfigurationHelper;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.UghHelper;
-import de.unigoettingen.sub.search.opac.Catalogue;
-import de.unigoettingen.sub.search.opac.ConfigOpac;
-import de.unigoettingen.sub.search.opac.ConfigOpacCatalogue;
-import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
-import de.unigoettingen.sub.search.opac.GetOpac;
-import de.unigoettingen.sub.search.opac.Query;
 
 @PluginImplementation
 public class PicaOpacImport implements IOpacPlugin {
@@ -199,9 +194,9 @@ public class PicaOpacImport implements IOpacPlugin {
          * -------------------------------- aus Opac-Ergebnis RDF-Datei erzeugen --------------------------------
          */
         /* XML in Datei schreiben */
-        //        XMLOutputter outputter = new XMLOutputter();
-        //        FileOutputStream output = new FileOutputStream("/tmp/temp_opac.xml");
-        //        outputter.output(myJdomDoc.getRootElement(), output);
+        //                XMLOutputter outputter = new XMLOutputter();
+        //                FileOutputStream output = new FileOutputStream("/tmp/temp_opac.xml");
+        //                outputter.output(myJdomDoc.getRootElement(), output);
 
         /* myRdf temporär in Datei schreiben */
         // myRdf.write("D:/temp.rdf.xml");
@@ -299,7 +294,7 @@ public class PicaOpacImport implements IOpacPlugin {
                 topstructChild = topstruct.getAllChildren().get(0);
             } catch (RuntimeException e) {
             }
-            mySecondHit = (Element) myFirstHit.getParentElement().getChildren().get(1);
+            mySecondHit = myFirstHit.getParentElement().getChildren().get(1);
         }
 
         /*
@@ -313,6 +308,9 @@ public class PicaOpacImport implements IOpacPlugin {
             String ppnAnalog = getElementFieldValue(myFirstHit, "039D", "9");
             if (ppnAnalog.isEmpty()) {
                 ppnAnalog = getElementFieldValue(myFirstHit, "039I", "9");
+            }
+            if (ppnAnalog.isEmpty()) {
+                ppnAnalog = getElementFieldValue(myFirstHit, "039I", "6");
             }
             ughhelp.replaceMetadatum(topstruct, inPrefs, "CatalogIDDigital", ppnAnalog);
             ughhelp.replaceMetadatum(topstruct, inPrefs, "CatalogIDSource", ppn);
@@ -331,10 +329,15 @@ public class PicaOpacImport implements IOpacPlugin {
                 if (ppnAnalog.isEmpty()) {
                     ppnAnalog = getElementFieldValue(mySecondHit, "039I", "9");
                 }
+                if (ppnAnalog.isEmpty()) {
+                    ppnAnalog = getElementFieldValue(myFirstHit, "039I", "6");
+                }
                 ughhelp.replaceMetadatum(topstructChild, inPrefs, "CatalogIDDigital", ppnAnalog);
                 ughhelp.replaceMetadatum(topstructChild, inPrefs, "CatalogIDSource", secondHitppn);
             }
         }
+        // TODO what if CatalogIDDigital is empty?
+
 
         /*
          * -------------------------------- den Main-Title bereinigen --------------------------------
@@ -390,6 +393,11 @@ public class PicaOpacImport implements IOpacPlugin {
         if (autor == null || autor.equals("")) {
             autor = getElementFieldValue(myFirstHit, "028A", "8").toLowerCase();
         }
+        if (autor == null || autor.equals("")) {
+            autor = getElementFieldValue(myFirstHit, "028A", "A").toLowerCase();
+        }
+
+        //TODO get author from 028C, if 028A is missing
         this.atstsl = createAtstsl(myTitle, autor);
 
         /*
@@ -414,6 +422,7 @@ public class PicaOpacImport implements IOpacPlugin {
      * @see de.sub.goobi.Import.IOpac#createAtstsl(java.lang.String, java.lang.String)
      */
 
+    @Override
     public String createAtstsl(String myTitle, String autor) {
         String myAtsTsl = "";
         if (autor != null && !autor.equals("")) {
@@ -590,7 +599,7 @@ public class PicaOpacImport implements IOpacPlugin {
     public ConfigOpacDoctype getOpacDocType() {
         try {
             ConfigOpac co = ConfigOpac.getInstance();
-//            ConfigOpac co = new ConfigOpac();
+            //            ConfigOpac co = new ConfigOpac();
             ConfigOpacDoctype cod = co.getDoctypeByMapping(this.gattung.substring(0, 2), this.coc.getTitle());
             if (cod == null) {
                 if (verbose) {
@@ -626,10 +635,12 @@ public class PicaOpacImport implements IOpacPlugin {
         return "PICA";
     }
 
+    @Override
     public void setAtstsl(String createAtstsl) {
         atstsl = createAtstsl;
     }
 
+    @Override
     public String getGattung() {
         return gattung;
     }
