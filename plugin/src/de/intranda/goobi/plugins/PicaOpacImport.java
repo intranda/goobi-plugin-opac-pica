@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.StringTokenizer;
 
-import org.apache.log4j.Logger;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.interfaces.IOpacPlugin;
 import org.jdom2.Attribute;
@@ -41,6 +40,7 @@ import de.unigoettingen.sub.search.opac.ConfigOpacCatalogue;
 import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
 import de.unigoettingen.sub.search.opac.GetOpac;
 import de.unigoettingen.sub.search.opac.Query;
+import lombok.extern.log4j.Log4j2;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
@@ -52,9 +52,9 @@ import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.fileformats.mets.XStream;
 import ugh.fileformats.opac.PicaPlus;
 
+@Log4j2
 @PluginImplementation
 public class PicaOpacImport implements IOpacPlugin {
-    protected static final Logger myLogger = Logger.getLogger(PicaOpacImport.class);
 
     protected int hitcount;
     protected String gattung = "Aa";
@@ -101,7 +101,7 @@ public class PicaOpacImport implements IOpacPlugin {
         /* von dem Treffer den Dokumententyp ermitteln */
         this.gattung = getGattung(myFirstHit);
 
-        myLogger.debug("Gattung: " + this.gattung);
+        log.debug("document type: " + this.gattung);
         /*
          * -------------------------------- wenn der Treffer ein Volume eines Multivolume-Bandes ist, dann das Sammelwerk überordnen
          * --------------------------------
@@ -613,7 +613,7 @@ public class PicaOpacImport implements IOpacPlugin {
             }
             return cod;
         } catch (Exception e) {
-            myLogger.error("OpacDoctype unknown", e);
+            log.error("OpacDoctype unknown", e);
             if (verbose) {
                 Helper.setFehlerMeldung(Helper.getTranslation("CatalogueUnKnownType"), e);
             }
