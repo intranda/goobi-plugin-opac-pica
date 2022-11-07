@@ -10,7 +10,6 @@ pipeline {
   options {
     buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '15', daysToKeepStr: '90', numToKeepStr: '')
   }
-
   
   
   stages {
@@ -26,8 +25,20 @@ pipeline {
         recordIssues enabledForFailure: true, aggregatingResults: true, tools: [java(), javaDoc()]
       }
     }
+    
+    stage('deployment of artifacts to maven repository') {
+      when {
+        anyOf {
+          tag "v*"
+          branch 'develop'
+          branch 'master'
+        }
+      }
+      steps {
+        sh 'mvn -f plugin/pom.xml deploy'
+      }
+    }
   }
-  
   post {
     success {
       archiveArtifacts artifacts: '**/target/*.jar, */plugin_*.xml, plugin_*.xml', fingerprint: true, onlyIfSuccessful: true
