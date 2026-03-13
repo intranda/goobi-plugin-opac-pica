@@ -3,6 +3,6 @@
 		<exec executable="mvn">
 			<arg value="package"/>
 		</exec>
-		<copy file="target/plugin_intranda_opac_pica.jar" todir="/opt/digiverso/goobi/plugins/opac/"/>
+		<copy file="module-base/target/plugin-opac-pica-base.jar" todir="/opt/digiverso/goobi/plugins/opac/"/>
 	</target>
 </project>

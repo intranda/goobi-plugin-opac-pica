@@ -20,7 +20,6 @@
 package de.intranda.goobi.plugins;
 
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.StringTokenizer;
 
 import org.goobi.production.enums.PluginType;
@@ -179,8 +178,7 @@ public class PicaOpacImport implements IOpacPlugin {
                      */
                     if (myFirstHitParent.getChildren() != null) {
 
-                        for (Iterator<Element> iter = myFirstHitParent.getChildren().iterator(); iter.hasNext();) {
-                            Element ele = iter.next();
+                        for (Element ele : myFirstHitParent.getChildren()) {
                             if (getElementFromChildren(myFirstHit, ele.getAttributeValue("tag")) == null) {
                                 myFirstHit.getChildren().add(getCopyFromJdomElement(ele));
                             }
@@ -225,11 +223,10 @@ public class PicaOpacImport implements IOpacPlugin {
      */
     public String getGattung(Element inHit) {
 
-        for (Iterator<Element> iter = inHit.getChildren().iterator(); iter.hasNext();) {
-            Element tempElement = iter.next();
+        for (Element tempElement : inHit.getChildren()) {
             String feldname = tempElement.getAttributeValue("tag");
             // System.out.println(feldname);
-            if (feldname.equals("002@")) {
+            if ("002@".equals(feldname)) {
                 return getSubelementValue(tempElement, "0");
             }
         }
@@ -239,8 +236,7 @@ public class PicaOpacImport implements IOpacPlugin {
     public String getSubelementValue(Element inElement, String attributeValue) {
         String rueckgabe = "";
 
-        for (Iterator<Element> iter = inElement.getChildren().iterator(); iter.hasNext();) {
-            Element subElement = iter.next();
+        for (Element subElement : inElement.getChildren()) {
             if (subElement.getAttributeValue("code").equals(attributeValue)) {
                 rueckgabe = subElement.getValue();
             }
@@ -255,8 +251,7 @@ public class PicaOpacImport implements IOpacPlugin {
      * @return
      */
     public String getPpnFromParent(Element inHit, String inFeldName, String inSubElement) {
-        for (Iterator<Element> iter = inHit.getChildren().iterator(); iter.hasNext();) {
-            Element tempElement = iter.next();
+        for (Element tempElement : inHit.getChildren()) {
             String feldname = tempElement.getAttributeValue("tag");
             // System.out.println(feldname);
             if (feldname.equals(inFeldName)) {
@@ -338,7 +333,6 @@ public class PicaOpacImport implements IOpacPlugin {
         }
         // TODO what if CatalogIDDigital is empty?
 
-
         /*
          * -------------------------------- den Main-Title bereinigen --------------------------------
          */
@@ -349,7 +343,7 @@ public class PicaOpacImport implements IOpacPlugin {
         if (myTitle == null || myTitle.length() == 0) {
             myTitle = getElementFieldValue(myFirstHit, "021B", "a");
         }
-        ughhelp.replaceMetadatum(topstruct, inPrefs, "TitleDocMain", myTitle.replaceAll("@", ""));
+        ughhelp.replaceMetadatum(topstruct, inPrefs, "TitleDocMain", myTitle.replace("@", ""));
 
         /*
          * -------------------------------- Sorting-Titel mit Umlaut-Konvertierung --------------------------------
@@ -363,7 +357,7 @@ public class PicaOpacImport implements IOpacPlugin {
          * -------------------------------- bei multivolumes den Main-Title bereinigen --------------------------------
          */
         if (topstructChild != null && mySecondHit != null) {
-            String fulltitleMulti = getElementFieldValue(mySecondHit, "021A", "a").replaceAll("@", "");
+            String fulltitleMulti = getElementFieldValue(mySecondHit, "021A", "a").replace("@", "");
             ughhelp.replaceMetadatum(topstructChild, inPrefs, "TitleDocMain", fulltitleMulti);
         }
 
@@ -383,17 +377,17 @@ public class PicaOpacImport implements IOpacPlugin {
          * -------------------------------- Ats Tsl Vorbereitung --------------------------------
          */
         myTitle = myTitle.toLowerCase();
-        myTitle = myTitle.replaceAll("&", "");
+        myTitle = myTitle.replace("&", "");
 
         /*
          * -------------------------------- bei nicht-Zeitschriften Ats berechnen --------------------------------
          */
         // if (!gattung.startsWith("ab") && !gattung.startsWith("ob")) {
         String autor = getElementFieldValue(myFirstHit, "028A", "a").toLowerCase();
-        if (autor == null || autor.equals("")) {
+        if (autor == null || "".equals(autor)) {
             autor = getElementFieldValue(myFirstHit, "028A", "8").toLowerCase();
         }
-        if (autor == null || autor.equals("")) {
+        if (autor == null || "".equals(autor)) {
             autor = getElementFieldValue(myFirstHit, "028A", "A").toLowerCase();
         }
 
@@ -406,12 +400,10 @@ public class PicaOpacImport implements IOpacPlugin {
         // if (isPeriodical()) {
         if (getOpacDocType().isPeriodical()) {
             try {
-                DocStructType dstV = inPrefs.getDocStrctTypeByName("PeriodicalVolume");
+                DocStructType dstV = inPrefs.getDocStrctTypeByName(getOpacDocType().getRulesetChildType());
                 DocStruct dsvolume = inDigDoc.createDocStruct(dstV);
                 topstruct.addChild(dsvolume);
-            } catch (TypeNotAllowedForParentException e) {
-                e.printStackTrace();
-            } catch (TypeNotAllowedAsChildException e) {
+            } catch (TypeNotAllowedForParentException | TypeNotAllowedAsChildException e) {
                 e.printStackTrace();
             }
         }
@@ -425,7 +417,7 @@ public class PicaOpacImport implements IOpacPlugin {
     @Override
     public String createAtstsl(String myTitle, String autor) {
         String myAtsTsl = "";
-        if (autor != null && !autor.equals("")) {
+        if (autor != null && !"".equals(autor)) {
             /* autor */
             if (autor.length() > 4) {
                 myAtsTsl = autor.substring(0, 4);
@@ -445,7 +437,7 @@ public class PicaOpacImport implements IOpacPlugin {
          * -------------------------------- bei Zeitschriften Tsl berechnen --------------------------------
          */
         // if (gattung.startsWith("ab") || gattung.startsWith("ob")) {
-        if (autor == null || autor.equals("")) {
+        if (autor == null || "".equals(autor)) {
             myAtsTsl = "";
             StringTokenizer tokenizer = new StringTokenizer(myTitle);
             int counter = 1;
@@ -482,8 +474,7 @@ public class PicaOpacImport implements IOpacPlugin {
     }
 
     public Element getElementFromChildren(Element inHit, String inTagName) {
-        for (Iterator<Element> iter2 = inHit.getChildren().iterator(); iter2.hasNext();) {
-            Element myElement = iter2.next();
+        for (Element myElement : inHit.getChildren()) {
             String feldname = myElement.getAttributeValue("tag");
             // System.out.println(feldname);
             /*
@@ -505,16 +496,14 @@ public class PicaOpacImport implements IOpacPlugin {
         myElement.setText(inHit.getText());
         /* jetzt auch alle Attribute übernehmen */
         if (inHit.getAttributes() != null) {
-            for (Iterator<Attribute> iter = inHit.getAttributes().iterator(); iter.hasNext();) {
-                Attribute att = iter.next();
+            for (Attribute att : inHit.getAttributes()) {
                 myElement.getAttributes().add(new Attribute(att.getName(), att.getValue()));
             }
         }
         /* jetzt auch alle Children übernehmen */
         if (inHit.getChildren() != null) {
 
-            for (Iterator<Element> iter = inHit.getChildren().iterator(); iter.hasNext();) {
-                Element ele = iter.next();
+            for (Element ele : inHit.getChildren()) {
                 myElement.addContent(getCopyFromJdomElement(ele));
             }
         }
@@ -523,8 +512,7 @@ public class PicaOpacImport implements IOpacPlugin {
 
     public String getElementFieldValue(Element myFirstHit, String inFieldName, String inAttributeName) {
 
-        for (Iterator<Element> iter2 = myFirstHit.getChildren().iterator(); iter2.hasNext();) {
-            Element myElement = iter2.next();
+        for (Element myElement : myFirstHit.getChildren()) {
             String feldname = myElement.getAttributeValue("tag");
             /*
              * wenn es das gesuchte Feld ist, dann den Wert mit dem passenden Attribut zurückgeben
@@ -539,8 +527,7 @@ public class PicaOpacImport implements IOpacPlugin {
     public String getFieldValue(Element inElement, String attributeValue) {
         String rueckgabe = "";
 
-        for (Iterator<Element> iter = inElement.getChildren().iterator(); iter.hasNext();) {
-            Element subElement = iter.next();
+        for (Element subElement : inElement.getChildren()) {
             if (subElement.getAttributeValue("code").equals(attributeValue)) {
                 rueckgabe = subElement.getValue();
             }
