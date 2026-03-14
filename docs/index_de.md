@@ -51,5 +51,5 @@ Das Attribut `title` enthält den Namen, unter dem der Katalog in der Nutzerober
 
 Das Mapping der Inhalte eines PICA-Datensatzes erfolgt innerhalb des jeweilig verwendeten Regelsatzes von Goobi workflow. Genauere Informationen, wie dieses Mapping konfiguriert werden kann finden sich innerhalb der UGH-Dokumentation hier:
 
-[https://docs.goobi.io/ugh-de/4/4.3/4.3.2](https://docs.goobi.io/ugh-de/4/4.3/4.3.2)
+https://docs.goobi.io/de/other/ugh/serialisation/pica/introduction
 
